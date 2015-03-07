@@ -1,0 +1,12 @@
+[package]
+
+name = "hack-interpreter"
+version = "0.0.1"
+authors = ["Kevin Butler <haqkrs@gmail.com>"]
+
+[lib]
+name = "hack_interpreter"
+path = "src/lib.rs"
+
+[dev-dependencies]
+tempdir = "*"
