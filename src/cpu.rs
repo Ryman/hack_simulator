@@ -53,9 +53,6 @@ impl Cpu {
 
 #[cfg(test)]
 mod smoke {
-    use super::*;
-    use Rom;
-
     /// Compare expected values for each cpu step
     /// Returns the `cpu`
     macro_rules! step_cpu(
@@ -63,7 +60,10 @@ mod smoke {
 
         // Compile a hack program then step
         (hack $program:expr; $($name:ident: $($expected:expr),+);*) => {{
+            use cpu::*;
+            use memory::Rom;
             println!("Executing program:\n{}", $program);
+
             let program = Rom::from_str($program).unwrap();
             let mut cpu = Cpu::new(program);
 
@@ -220,38 +220,95 @@ mod smoke {
         );
     }
 
-    #[test]
-    fn store_d() {
-        step_cpu!(hack "1110010101010000\n"; // D = 1
-            rd: 0, 1, 1, 1, 1;
+    mod store {
+        #[test]
+        fn d() {
+            step_cpu!(hack "1110010101010000\n"; // D = 1
+                rd: 0, 1, 1, 1, 1;
 
-            // Ensure it doesn't affect pc or ra
-            pc: 0, 1, 2, 3, 4;
-            ra: 0, 0, 0, 0, 0
-        );
-    }
+                // Ensure it doesn't affect pc or ra
+                pc: 0, 1, 2, 3, 4;
+                ra: 0, 0, 0, 0, 0
+            );
+        }
 
-    #[test]
-    fn store_a() {
-        step_cpu!(hack "1110010101100000\n"; // A = 1
-            // zeroed instructions after the program cause A to become zero
-            ra: 0, 1, 0, 0;
+        #[test]
+        fn a() {
+            step_cpu!(hack "1110010101100000\n"; // A = 1
+                // zeroed instructions after the program cause A to become zero
+                ra: 0, 1, 0, 0;
 
-            // Ensure it doesn't affect pc or rd
-            pc: 0, 1, 2, 3, 4;
-            rd: 0, 0, 0, 0, 0
-        );
-    }
+                // Ensure it doesn't affect pc or rd
+                pc: 0, 1, 2, 3, 4;
+                rd: 0, 0, 0, 0, 0
+            );
+        }
 
-    #[test]
-    fn store_m() {
-        let mut cpu = step_cpu!(hack "0000000000100000\n\
-                                      1110010101001000\n";); // M = 1
-        // TODO: Support ram[foo] in macro
-        assert_eq!(cpu.ram[32], 0);
-        cpu.step();
-        assert_eq!(cpu.ra, 32);
-        cpu.step();
-        assert_eq!(cpu.ram[32], 1);
+        #[test]
+        fn m() {
+            let mut cpu = step_cpu!(hack "0000000000100000\n\
+                                          1110010101001000\n";); // M = 1
+            // TODO: Support ram[foo] in macro
+            assert_eq!(cpu.ram[32], 0);
+            cpu.step();
+            assert_eq!(cpu.ra, 32);
+            cpu.step();
+            assert_eq!(cpu.ram[32], 1);
+        }
+
+        #[test]
+        fn ad() {
+            step_cpu!(hack "1110010101110000\n"; // AD = 1
+                ra: 0, 1, 0, 0;
+
+                // Ensure it doesn't affect pc or rd
+                pc: 0, 1, 2, 3, 4;
+                rd: 0, 1, 1, 1, 1
+            );
+        }
+
+        #[test]
+        fn am() {
+            let mut cpu = step_cpu!(hack "0000000000100000\n\
+                                          1110010101101000\n";); // AM = 1
+            // TODO: Support ram[foo] in macro
+            assert_eq!(cpu.ram[32], 0);
+            cpu.step();
+            assert_eq!(cpu.ra, 32);
+            cpu.step();
+            assert_eq!(cpu.ram[32], 1);
+            assert_eq!(cpu.ra, 1);
+        }
+
+        #[test]
+        fn md() {
+            let mut cpu = step_cpu!(hack "0000000000100000\n\
+                                          1110010101011000\n";); // MD = 1
+            // TODO: Support ram[foo] in macro
+            assert_eq!(cpu.ram[32], 0);
+            cpu.step();
+            assert_eq!(cpu.ra, 32);
+            assert_eq!(cpu.rd, 0);
+            cpu.step();
+            assert_eq!(cpu.ram[32], 1);
+            assert_eq!(cpu.rd, 1);
+            // Ensure ra is not affected
+            assert_eq!(cpu.ra, 32);
+        }
+
+        #[test]
+        fn amd() {
+            let mut cpu = step_cpu!(hack "0000000000100000\n\
+                                          1110010101111000\n";); // AMD = 1
+            // TODO: Support ram[foo] in macro
+            assert_eq!(cpu.ram[32], 0);
+            cpu.step();
+            assert_eq!(cpu.ra, 32);
+            assert_eq!(cpu.rd, 0);
+            cpu.step();
+            assert_eq!(cpu.ram[32], 1);
+            assert_eq!(cpu.rd, 1);
+            assert_eq!(cpu.ra, 1);
+        }
     }
 }
