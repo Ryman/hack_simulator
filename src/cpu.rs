@@ -220,6 +220,172 @@ mod smoke {
         );
     }
 
+    mod compute {
+        #[test]
+        fn d() {
+            step_cpu!(hack "1000010101010000\n\
+                            1000001100100000\n"; // D=1, A=D
+                ra: 0, 0, 1;
+                pc: 0, 1, 2, 3;
+                rd: 0, 1, 1, 1
+            );
+        }
+
+        #[test]
+        fn a() {
+            step_cpu!(hack "0000000000001000\n\
+                            1000110000010000\n"; // A=8, D=A
+                ra: 0, 8, 8;
+                pc: 0, 1, 2, 3;
+                rd: 0, 0, 8, 8
+            );
+        }
+
+        #[test]
+        fn m() {
+            step_cpu!(hack "1000010101010000\n\
+                            1001110000010000\n"; // D=1, D=M[0]
+                ra: 0, 0, 0, 0;
+                pc: 0, 1, 2, 3;
+                rd: 0, 1, 0, 0
+            );
+        }
+
+        #[test]
+        fn not_d() {
+            step_cpu!(hack "1000001101010000"; // D=!D
+                ra: 0, 0, 0, 0;
+                pc: 0, 1, 2, 3;
+                rd: 0, 0xFFFF, 0xFFFF, 0xFFFF
+            );
+        }
+
+        #[test]
+        fn not_a() {
+            step_cpu!(hack "1000110001100000"; // A=!A
+                ra: 0, 0xFFFF, 0, 0;
+                pc: 0, 1, 2, 3;
+                rd: 0, 0, 0, 0
+            );
+        }
+
+        #[test]
+        fn not_m() {
+            let mut cpu = step_cpu!(hack "1000010101001000\n\
+                                          1001110001010000";); // M=1, D=!M
+            assert_eq!(cpu.ram[0], 0);
+            assert_eq!(cpu.ra, 0);
+            cpu.step();
+            assert_eq!(cpu.ram[0], 1);
+            assert_eq!(cpu.ra, 0);
+            cpu.step();
+            assert_eq!(cpu.ram[0], 1);
+            assert_eq!(cpu.rd, 0xFFFE);
+        }
+
+        #[test]
+        fn negate_d() {
+            step_cpu!(hack "1000010101010000\n\
+                            1000001111010000"; // D=1, D=-D
+                ra: 0, 0, 0, 0;
+                pc: 0, 1, 2, 3;
+                rd: 0, 1, -1, -1
+            );
+        }
+
+        #[test]
+        fn negate_a() {
+            step_cpu!(hack "1000010101100000\n\
+                            1000110011010000"; // A=1, D=-A
+                ra: 0, 1, 1, 0;
+                pc: 0, 1, 2, 3;
+                rd: 0, 0, -1, -1
+            );
+        }
+
+        #[test]
+        fn negate_m() {
+            let mut cpu = step_cpu!(hack "1000010101001000\n\
+                                          1001110011010000";); // M=1, D=-M
+            assert_eq!(cpu.ram[0], 0);
+            assert_eq!(cpu.ra, 0);
+            cpu.step();
+            assert_eq!(cpu.ram[0], 1);
+            assert_eq!(cpu.ra, 0);
+            cpu.step();
+            assert_eq!(cpu.ram[0], 1);
+            assert_eq!(cpu.rd, -1);
+        }
+
+        #[test]
+        fn inc_d() {
+            step_cpu!(hack "1000011111010000\n\
+                            1000011111100000"; // D=D+1, A=D+1
+                ra: 0, 0, 2;
+                pc: 0, 1, 2;
+                rd: 0, 1, 1
+            );
+        }
+
+        #[test]
+        fn inc_a() {
+            step_cpu!(hack "1000110111100000\n\
+                            1000110111010000"; // A=A+1, D=A+1
+                ra: 0, 1, 1, 0;
+                pc: 0, 1, 2, 3;
+                rd: 0, 0, 2, 2
+            );
+        }
+
+        #[test]
+        fn inc_m() {
+            let mut cpu = step_cpu!(hack "1001110111001000\n\
+                                          1001110111010000";); // M=M+1, D=M+1
+            assert_eq!(cpu.ram[0], 0);
+            assert_eq!(cpu.ra, 0);
+            cpu.step();
+            assert_eq!(cpu.ram[0], 1);
+            assert_eq!(cpu.ra, 0);
+            cpu.step();
+            assert_eq!(cpu.ram[0], 1);
+            assert_eq!(cpu.rd, 2);
+        }
+
+        #[test]
+        fn dec_d() {
+            step_cpu!(hack "1000001110010000\n\
+                            1000001110100000"; // D=D-1, A=D-1
+                ra: 0, 0, -2;
+                pc: 0, 1, 2;
+                rd: 0, -1, -1
+            );
+        }
+
+        #[test]
+        fn dec_a() {
+            step_cpu!(hack "1000110010100000\n\
+                            1000110010010000"; // A=A-1, D=A-1
+                ra: 0, -1, -1, 0;
+                pc: 0, 1, 2, 3;
+                rd: 0, 0, -2, -2
+            );
+        }
+
+        #[test]
+        fn dec_m() {
+            let mut cpu = step_cpu!(hack "1001110010001000\n\
+                                          1001110010010000";); // M=M-1, D=M-1
+            assert_eq!(cpu.ram[0], 0);
+            assert_eq!(cpu.ra, 0);
+            cpu.step();
+            assert_eq!(cpu.ram[0], -1);
+            assert_eq!(cpu.ra, 0);
+            cpu.step();
+            assert_eq!(cpu.ram[0], -1);
+            assert_eq!(cpu.rd, -2);
+        }
+    }
+
     mod store {
         #[test]
         fn d() {

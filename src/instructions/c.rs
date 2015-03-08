@@ -23,16 +23,28 @@ impl CInstruction {
     }
 
     fn a_is_address(&self) -> bool {
-        self.0 & (1 << 12) == 0
+        self.0 & (1 << 12) != 0
     }
 
-    fn computation(&self, _x: Word, _y: Word) -> (Word, bool, bool) {
+    fn computation(&self, x: Word, y: Word) -> (Word, bool, bool) {
         let bit = |i: usize| ((self.0 & (1<<i) != 0) as u8);
 
+        let x = x as i16;
+        let y = y as i16;
         let result: i16 = match (bit(11), bit(10), bit(9), bit(8), bit(7), bit(6)) {
             (1, 0, 1, 0, 1, 0) => 0,
             (0, 1, 0, 1, 0, 1) => 1,
             (1, 1, 1, 0, 1, 0) => -1,
+            (0, 0, 1, 1, 0, 0) => x,
+            (1, 1, 0, 0, 0, 0) => y,
+            (0, 0, 1, 1, 0, 1) => !x,
+            (1, 1, 0, 0, 0, 1) => !y,
+            (0, 0, 1, 1, 1, 1) => -x,
+            (1, 1, 0, 0, 1, 1) => -y,
+            (0, 1, 1, 1, 1, 1) => x + 1,
+            (1, 1, 0, 1, 1, 1) => y + 1,
+            (0, 0, 1, 1, 1, 0) => x - 1,
+            (1, 1, 0, 0, 1, 0) => y - 1,
             (c1, c2, c3, c4, c5, c6) => panic!("Unhandled computation: {}{}{}{}{}{}",
                                                 c1, c2, c3, c4, c5, c6)
         };
