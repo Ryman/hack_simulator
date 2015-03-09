@@ -8,5 +8,10 @@ authors = ["Kevin Butler <haqkrs@gmail.com>"]
 name = "hack_interpreter"
 path = "src/lib.rs"
 
+[dependencies]
+log = "*"
+
 [dev-dependencies]
 tempdir = "*"
+glob = "*"
+

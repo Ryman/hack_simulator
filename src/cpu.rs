@@ -5,9 +5,10 @@ pub type Register = Word;
 pub type ProgramCounter = Word;
 
 pub struct Cpu {
-    ram: Ram,
+    pub ram: Ram,
+    pub pc: ProgramCounter,
+
     rom: Rom,
-    pc: ProgramCounter,
     ra: Register,
     rd: Register,
 }
@@ -32,7 +33,7 @@ impl Cpu {
 
         // Decode
         let instruction = Instruction::new(raw_instruction);
-        println!("current instruction: {:?}", instruction);
+        debug!("current instruction: {:?}", instruction);
 
         // Execute
         match instruction {
