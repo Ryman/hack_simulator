@@ -52,6 +52,7 @@ impl Deref for Rom {
 mod tests {
     extern crate tempdir;
     use super::*;
+    use memory::ROM_SIZE;
     use std::io;
     use std::io::Write;
     use std::fs::File;
@@ -86,7 +87,7 @@ mod tests {
     #[test]
     fn assert_size() {
         let rom = rom_with_data("1111111111111111").unwrap();
-        assert_eq!(rom.len(), 8192);
+        assert_eq!(rom.len(), ROM_SIZE);
         assert_eq!(rom[0], 0xFFFF);
 
         for &b in &rom[1..] {
@@ -98,7 +99,7 @@ mod tests {
     fn accept_trailing_blanklines() {
         let rom = rom_with_data("1111000010100101\n\n\n\n").unwrap();
         assert_eq!(rom[0], 0b1111000010100101);
-        assert_eq!(rom.len(), 8192);
+        assert_eq!(rom.len(), ROM_SIZE);
     }
 
     #[test]
@@ -108,13 +109,13 @@ mod tests {
                                 1000000000000111\n").unwrap();
         assert_eq!(rom[0], 0b0000000000100000);
         assert_eq!(rom[1], 0b1000000000000111);
-        assert_eq!(rom.len(), 8192);
+        assert_eq!(rom.len(), ROM_SIZE);
     }
 
     #[test]
     #[should_fail(expected="ROM cannot fit program")]
     fn too_large() {
-        let data = (0..20000).map(|_|"0000000000000000\n")
+        let data = (0..ROM_SIZE+1).map(|_|"0000000000000000\n")
                              .collect::<String>();
         let rom = rom_with_data(&data).unwrap();
 
