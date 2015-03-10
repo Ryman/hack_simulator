@@ -5,8 +5,9 @@ See http://nand2tetris.org/ for more details.
 - Rust nightly - [multirust recommended](https://github.com/brson/multirust)
 - SDL2
 
-# Run the testsuite
+# Run the interpreter testsuite
 ```
+$ cd interpreter
 $ cargo test
 ```
 

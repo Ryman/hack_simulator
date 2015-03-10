@@ -1,2 +1,4 @@
 target
 *.out
+.DS_Store
+interpreter/Cargo.lock
