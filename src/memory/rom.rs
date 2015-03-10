@@ -112,7 +112,7 @@ mod tests {
     }
 
     #[test]
-    #[should_fail(expected="ROM cannot fit program")]
+    #[should_panic(expected="ROM cannot fit program")]
     fn too_large() {
         let data = (0..ROM_SIZE+1).map(|_|"0000000000000000\n")
                              .collect::<String>();
