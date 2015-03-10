@@ -20,9 +20,9 @@ const SCREEN_MEMORY_LEN: usize = WIDTH * HEIGHT / 16;
 const KEYBOARD_ADDR: usize = SCREEN_ADDR + SCREEN_MEMORY_LEN;
 
 // TODO: MATH - Decide the MHz of the Cpu, partition it between frames
-const CYCLES_PER_IDLE: usize = 20000;
-const MAX_FPS: u64 = 30;
-const UPDATES_PER_SEC: u64 = 30;
+const CYCLES_PER_IDLE: usize = 10000;
+const MAX_FPS: u64 = 60;
+const UPDATES_PER_SEC: u64 = 60;
 
 pub fn run_simulator(input: &str) {
     let program = Rom::from_file(&input).unwrap();
@@ -50,7 +50,15 @@ pub fn run_simulator(input: &str) {
                     .set(Ups(UPDATES_PER_SEC))
                     .set(MaxFps(MAX_FPS)) {
         if let Some(Button::Keyboard(key)) = e.press_args() {
-            cpu.ram[KEYBOARD_ADDR] = key as u16;
+            // HACK: Pong is expecting 'ASCII' keycodes of
+            // 130 and 132 for left and right movement even
+            // even though 130 and 132 are not actually ASCII.
+            // Will probably need to remap a bunch of other keys.
+            cpu.ram[KEYBOARD_ADDR] = match key {
+                Key::Left => 130,
+                Key::Right => 132,
+                key => key as u16
+            };
         }
 
         if let Some(Button::Keyboard(_)) = e.release_args() {
