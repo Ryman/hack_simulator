@@ -13,6 +13,9 @@ log = "*"
 docopt = "*"
 rustc-serialize = "*"
 
+[dependencies.drawille]
+git = "https://github.com/Ryman/drawille-rs"
+
 [dev-dependencies]
 tempdir = "*"
 glob = "*"

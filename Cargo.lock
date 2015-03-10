@@ -3,6 +3,7 @@ name = "hack-interpreter"
 version = "0.0.1"
 dependencies = [
  "docopt 0.6.45 (registry+https://github.com/rust-lang/crates.io-index)",
+ "drawille 0.1.5 (git+https://github.com/Ryman/drawille-rs)",
  "glob 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "log 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "rustc-serialize 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -18,6 +19,11 @@ dependencies = [
  "regex 0.1.18 (registry+https://github.com/rust-lang/crates.io-index)",
  "rustc-serialize 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
+
+[[package]]
+name = "drawille"
+version = "0.1.5"
+source = "git+https://github.com/Ryman/drawille-rs#447aeccba53d2cc739a4b25ce20482b138d29bbb"
 
 [[package]]
 name = "glob"
