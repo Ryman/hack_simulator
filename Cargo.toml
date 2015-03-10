@@ -13,10 +13,21 @@ log = "*"
 docopt = "*"
 rustc-serialize = "*"
 
-[dependencies.drawille]
-git = "https://github.com/Ryman/drawille-rs"
-
 [dev-dependencies]
 tempdir = "*"
 glob = "*"
 
+[dependencies.piston]
+git = "https://github.com/PistonDevelopers/piston"
+
+[dependencies.pistoncore-sdl2_window]
+git = "https://github.com/pistondevelopers/sdl2_window"
+
+[dependencies.piston2d-opengl_graphics]
+git = "https://github.com/pistondevelopers/opengl_graphics"
+
+[dependencies.piston2d-graphics]
+git = "https://github.com/pistondevelopers/graphics"
+
+[dependencies.image]
+git = "https://github.com/pistondevelopers/image"
