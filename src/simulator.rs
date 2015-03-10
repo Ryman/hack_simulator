@@ -5,7 +5,7 @@ use piston::quack::Set;
 use piston::window::WindowSettings;
 use piston::input::Button;
 use piston::input::keyboard::Key;
-use piston::event::{PressEvent, ReleaseEvent, IdleEvent, RenderEvent, UpdateEvent};
+use piston::event::{PressEvent, ReleaseEvent, RenderEvent, UpdateEvent};
 use piston::event::{MaxFps, Ups};
 use graphics;
 use opengl_graphics::{GlGraphics, Texture, OpenGL};
@@ -20,8 +20,8 @@ const SCREEN_MEMORY_LEN: usize = WIDTH * HEIGHT / 16;
 const KEYBOARD_ADDR: usize = SCREEN_ADDR + SCREEN_MEMORY_LEN;
 
 // TODO: MATH - Decide the MHz of the Cpu, partition it between frames
-const CYCLES_PER_IDLE: usize = 10000;
-const MAX_FPS: u64 = 60;
+const CYCLES_PER_UPDATE: usize = 40000;
+const MAX_FPS: u64 = 30;
 const UPDATES_PER_SEC: u64 = 60;
 
 pub fn run_simulator(input: &str) {
@@ -75,9 +75,8 @@ pub fn run_simulator(input: &str) {
         e.update(|_| {
             render_screen(image, &cpu);
             texture.update(image);
+            for _ in (0..CYCLES_PER_UPDATE) { cpu.step() }
         });
-
-        e.idle(|_| for _ in (0..CYCLES_PER_IDLE) { cpu.step() });
     }
 }
 
