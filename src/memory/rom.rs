@@ -5,7 +5,7 @@ use std::num::FromStrRadix;
 
 use memory::{ROM_SIZE, Word};
 
-pub struct Rom([Word; ROM_SIZE]);
+pub struct Rom(Vec<Word>);
 
 impl Rom {
     pub fn from_file<P: path::AsPath>(filename: &P) -> io::Result<Rom> {
@@ -16,24 +16,23 @@ impl Rom {
     }
 
     pub fn from_str(s: &str) -> io::Result<Rom> {
-        let data = s.trim()
-                    .lines()
-                    // FIXME: Ensure linelength 16
-                    .filter(|l| l.len() == 16 && (&l[0..1] != "0" || &l[0..1] != "1"))
-                    .map(|l| FromStrRadix::from_str_radix(l, 2).unwrap())
-                    .collect::<Vec<Word>>();
+        let mut buf = s.trim()
+                      .lines()
+                      .filter(|l| l.len() == 16 && (&l[0..1] != "0" || &l[0..1] != "1"))
+                      .map(|l| FromStrRadix::from_str_radix(l, 2).unwrap())
+                      .collect::<Vec<_>>();
 
-        if data.len() > ROM_SIZE {
+        let instructions = buf.len();
+
+        if instructions > ROM_SIZE {
             return Err(io::Error::new(ErrorKind::Other,
                                       "ROM cannot fit program",
-                                      Some(format!("{} is the maximum instruction count", ROM_SIZE))))
+                                      Some(format!("{} is the maximum instruction count",
+                                                    ROM_SIZE))))
         }
 
-        let mut buf = [0; ROM_SIZE];
-        for (idx, word) in data.into_iter().enumerate() {
-            buf[idx] = word
-        }
-
+        // Zero the remaining buffer
+        buf.extend((0..ROM_SIZE - instructions).map(|_| 0));
         Ok(Rom(buf))
     }
 }

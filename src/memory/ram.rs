@@ -1,10 +1,10 @@
 use std::ops::{Deref, DerefMut};
 use memory::{RAM_SIZE, Word};
 
-pub struct Ram([Word; RAM_SIZE]);
+pub struct Ram(Vec<Word>);
 
 impl Ram {
-    pub fn new() -> Ram { Ram([0; RAM_SIZE]) }
+    pub fn new() -> Ram { Ram(vec![0; RAM_SIZE]) }
 }
 
 // Implement both Deref and DerefMut for Ram
