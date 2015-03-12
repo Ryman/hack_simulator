@@ -2,4 +2,5 @@ language: rust
 
 script:
 - (cd interpreter && cargo test)
+- (cd assembler && cargo test)
 - cargo test

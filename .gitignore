@@ -2,3 +2,4 @@ target
 *.out
 .DS_Store
 interpreter/Cargo.lock
+assembler/Cargo.lock

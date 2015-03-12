@@ -1,0 +1,8 @@
+[package]
+
+name = "hack_assembler"
+version = "0.0.1"
+authors = ["Kevin Butler <haqkrs@gmail.com>"]
+
+[dev-dependencies]
+glob = "=0.2.2"
