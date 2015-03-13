@@ -48,7 +48,7 @@ check! {
         d_and_m     "D&M" => "1000000",
         d_or_m      "D|M" => "1010101"
     } do |mnemonic, bits| {
-        assert_eq!(Code::comp(mnemonic), bits)
+        assert_eq!(Code::comp(mnemonic).unwrap(), bits)
     }
 }
 
