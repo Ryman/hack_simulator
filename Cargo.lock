@@ -98,9 +98,14 @@ version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
+name = "hack_assembler"
+version = "0.0.1"
+
+[[package]]
 name = "hack_interpreter"
 version = "0.0.1"
 dependencies = [
+ "hack_assembler 0.0.1",
  "log 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 

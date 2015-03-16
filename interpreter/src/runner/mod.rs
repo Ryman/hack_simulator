@@ -3,6 +3,7 @@ use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 use std::fs::{File, PathExt};
 use {Rom, Cpu};
+use hack_assembler::assemble;
 
 use self::commands::{Command, Commands};
 #[macro_use] mod macros;
@@ -72,12 +73,18 @@ impl<'a> Runner<'a> {
     }
 
     fn load_program(&mut self, filename: &str) -> Result<(), String> {
-        if !filename.ends_with(".hack") {
+        let path = self.base_path.with_file_name(&filename);
+        let rom = if filename.ends_with(".asm") {
+            let assembly = file_to_string!(&path);
+            let program = try!(assemble(&assembly));
+            Rom::from_str(&program)
+        } else if filename.ends_with(".hack") {
+            Rom::from_file(&path)
+        } else {
             return Err(format!("Unsupported file type: {}", filename))
-        }
+        };
 
-        let rom = try_s!(Rom::from_file(&self.base_path.with_file_name(&filename)));
-        self.cpu = Cpu::new(rom);
+        self.cpu = Cpu::new(try_s!(rom));
         Ok(())
     }
 

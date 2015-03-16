@@ -4,9 +4,12 @@ name = "hack_interpreter"
 version = "0.0.1"
 authors = ["Kevin Butler <haqkrs@gmail.com>"]
 
+[dependencies.hack_assembler]
+path = "../assembler"
+
 [dependencies]
 log = "*"
 
 [dev-dependencies]
 tempdir = "*"
-glob = "*"
+glob = "=0.2.2"
