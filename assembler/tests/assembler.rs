@@ -1,5 +1,3 @@
-#![feature(io, path)]
-
 extern crate hack_assembler;
 extern crate glob;
 

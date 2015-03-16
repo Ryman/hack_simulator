@@ -1,4 +1,4 @@
-#![feature(collections, unicode)]
+#![feature(collections)]
 
 pub use code::Code;
 pub use parser::{Command, Parser};
