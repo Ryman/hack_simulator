@@ -39,14 +39,14 @@ impl<'a> Parser<'a> {
         }
     }
 
-    pub fn symbol(&self) -> &str {
+    pub fn symbol(&self) -> &'a str {
         match self.command_type() {
             Command::A => &self.current[1..],
             Command::L => self.current.trim_matches(&['(', ')'][..]),
             _ => wrong_command_type("symbol")
         }
     }
-    pub fn dest(&self) -> &str {
+    pub fn dest(&self) -> &'a str {
         if self.command_type() != Command::C { wrong_command_type("dest") }
 
         self.current.find('=')
@@ -54,7 +54,7 @@ impl<'a> Parser<'a> {
                     .unwrap_or("")
     }
 
-    pub fn comp(&self) -> &str {
+    pub fn comp(&self) -> &'a str {
         if self.command_type() != Command::C { wrong_command_type("comp") }
 
         let idx = self.current.find(';')
@@ -64,12 +64,25 @@ impl<'a> Parser<'a> {
             .next()
             .unwrap_or("")
     }
-    pub fn jump(&self) -> &str {
+    pub fn jump(&self) -> &'a str {
         if self.command_type() != Command::C { wrong_command_type("jump") }
 
         self.current.find(';')
                     .map(|idx| &self.current[idx+1..])
                     .unwrap_or("")
+    }
+
+    // This could probably be an iterator but there are tricky lifetimes
+    // to maintain the api presented in the book
+    pub fn each_advance<F, E>(&mut self, mut f: F) -> Result<(), E>
+            where F: FnMut(&mut Parser<'a>) -> Option<E> {
+        while self.has_more_commands() {
+            self.advance();
+
+            if let Some(error) = f(self) { return Err(error) }
+        }
+
+        Ok(())
     }
 }
 

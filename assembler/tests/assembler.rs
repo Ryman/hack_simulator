@@ -21,7 +21,7 @@ fn assembles_expected_hack() {
                  .map(|_| assemble(s).unwrap())
                  .map(|generated| {
                     let ref mut expected = String::new();
-                    File::open(&filename.with_file_name(".hack"))
+                    File::open(&filename.with_extension("hack"))
                          .and_then(|mut f| f.read_to_string(expected))
                          .unwrap();
 
