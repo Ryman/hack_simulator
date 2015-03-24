@@ -152,7 +152,7 @@ impl<'a> Runner<'a> {
             let val = if is_header {
                 try!(header_name(format))
             } else {
-                try!(format_val(&left_fmt[0..1], val))
+                try!(format_val(&left_fmt[0..1], val as i16))
             };
 
             let lpad = try_s!(left_fmt[1..].parse());
@@ -195,7 +195,7 @@ impl<'a> Runner<'a> {
                         "destination for format header").to_string())
         }
 
-        fn format_val(format: &str, val: u16) -> Result<String, String> {
+        fn format_val(format: &str, val: i16) -> Result<String, String> {
             let s = match format {
                 // String
                 "S" => unimplemented!(),
