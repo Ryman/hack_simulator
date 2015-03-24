@@ -68,7 +68,7 @@ pub fn run_simulator(input: &str) {
         if let Some(args) = e.render_args() {
             gl.draw(
                 [0, 0, args.width as i32, args.height as i32],
-                |c, g| graphics::image(&texture, &c, g)
+                |c, g| graphics::image(&texture, c.transform, g)
             );
         }
 
