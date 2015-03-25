@@ -120,10 +120,13 @@ impl<'a> Runner<'a> {
         let actual = self.output.lines();
 
         for (lineno, (a, b)) in actual.zip(expected).enumerate() {
-            if a.trim() != b.trim() {
-                return Err(format!("Comparison failed at line: {}\n\
-                                    Got: '{}'\nExpected: '{}'",
-                                    lineno, a, b))
+            // Only care about mismatches if the actual cell content is different
+            for (a, b) in a.split('|').zip(b.split('|')) {
+                if a.trim() != b.trim() {
+                    return Err(format!("Comparison failed at line: {}\n\
+                                        Got: '{}'\nExpected: '{}'",
+                                        lineno, a, b))
+                }
             }
         }
         Ok(())
