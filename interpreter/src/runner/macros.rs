@@ -17,6 +17,6 @@ macro_rules! file_to_string(
 
 macro_rules! expect(
     ($iter:expr, $msg:expr) => (
-        try!($iter.next().ok_or(format!("Failed to parse {}", $msg)))
+        try!($iter.next().ok_or(format!("Failed to parse {}", $msg))).trim()
     )
 );

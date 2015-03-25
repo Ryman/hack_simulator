@@ -16,12 +16,14 @@ impl<'a> Command<'a> {
     fn parse(s: &'a str) -> Result<Command<'a>, String> {
         debug!("Parsing Command: '{}'", s);
 
-        let mut parts = s.split(' ');
+        let mut parts = s.split(|c| c == ' ' || c == '\t' || c == '\n' || c == '\r');
         let cmd = match expect!(parts, "name") {
             "load" => Load(expect!(parts, "filename for load")),
             "output-file" => OutputFile(expect!(parts, "filename for output-file")),
             "compare-to" => CompareTo(expect!(parts, "filename for compare-to")),
-            "output-list" => OutputList(parts.collect()),
+            "output-list" => OutputList(parts.map(|s| s.trim())
+                                             .filter(|s| !s.is_empty())
+                                             .collect()),
             "set" => {
                 let location = expect!(parts, "location for set");
                 let raw_value = expect!(parts, "value for set");
