@@ -133,10 +133,6 @@ impl<'a> Runner<'a> {
     }
 
     fn set_formatting(&mut self, formats: &[&'a str]) -> Result<(), String> {
-        if self.output.len() > 0 {
-            return Err("Format string changed after output command".to_string())
-        }
-
         self.formats = formats.to_vec();
         self.write_output_line(true)
     }

@@ -19,3 +19,7 @@ set RAM[3015] 45,
 set RAM[11] 510,
 
 output;
+
+output-list RAM[256]%D2.6.2;
+
+output;
