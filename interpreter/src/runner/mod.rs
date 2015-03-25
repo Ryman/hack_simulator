@@ -164,6 +164,10 @@ impl<'a> Runner<'a> {
 
             let padding = |l| (0..l).map(|_| ' ');
             self.output.push('|');
+            if len < val.len() {
+                return Err(format!("The formatting '{}' cannot fit the value '{}'",
+                                  format, val))
+            }
             self.output.extend(padding(lpad + (len - val.len())));
             self.output.push_str(&val);
             self.output.extend(padding(rpad));
