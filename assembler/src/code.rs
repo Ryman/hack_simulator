@@ -10,7 +10,15 @@ impl Code {
     }
 
     pub fn comp(mnemonic: &str) -> Result<&'static str, String> {
-        let code = match mnemonic {
+        // Non-standard but convenient remappings
+        let canonical = match mnemonic {
+            "M+D" => "D+M",
+            "M&D" => "D&M",
+            "M|D" => "D|M",
+            mnemonic => mnemonic
+        };
+
+        let code = match canonical {
             "0" => "0101010",
             "1" => "0111111",
             "-1" => "0111010",
