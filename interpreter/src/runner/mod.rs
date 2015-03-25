@@ -149,26 +149,46 @@ impl<'a> Runner<'a> {
             let left_fmt = expect!(parts, "type for format");
             debug!("fmt {:?}, left_fmt {:?}", format, left_fmt);
 
-            let val = if is_header {
+            let mut val = if is_header {
                 try!(header_name(format))
             } else {
                 try!(format_val(&left_fmt[0..1], val as i16))
             };
 
-            let lpad = try_s!(left_fmt[1..].parse());
+            let lpad: isize = try_s!(left_fmt[1..].parse());
             let len = try_s!(expect!(parts, "length for format").parse());
             let rpad = try_s!(expect!(parts, "right padding for format").parse());
+            let max_len = lpad + len + rpad;
+            let val_len = val.len() as isize;
 
             debug!("lpad: {}, val_len: {}, len: {}, rpad: {}",
-                    lpad, val.len(), len, rpad);
+                    lpad, val_len, len, rpad);
 
             let padding = |l| (0..l).map(|_| ' ');
             self.output.push('|');
-            if len < val.len() {
-                return Err(format!("The formatting '{}' cannot fit the value '{}'",
-                                  format, val))
+
+            // The JVM version first uses the left pad
+            // then the right pad and then truncates silently.
+            let lpad = lpad + (len - val_len);
+            if lpad > 0 {
+                self.output.extend(padding(lpad))
             }
-            self.output.extend(padding(lpad + (len - val.len())));
+
+            let rpad = if val_len > max_len {
+                if is_header {
+                    // Silent truncation for headers \o/
+                    val.truncate(max_len as usize);
+                    0
+                } else {
+                    return Err(format!("value '{}' could not fit in the specified\
+                                        formatting: '{}", val, format))
+                }
+            } else if val_len + rpad > max_len {
+                max_len - val_len
+            } else {
+                rpad
+            };
+
             self.output.push_str(&val);
             self.output.extend(padding(rpad));
         }
