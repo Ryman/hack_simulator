@@ -27,8 +27,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "clock_ticks"
-version = "0.0.4"
-source = "git+https://github.com/tomaka/clock_ticks#6a3005279bedc406b13eea09ff92447f05ca0de6"
+version = "0.0.5"
+source = "git+https://github.com/tomaka/clock_ticks#cdb6499b4c0ff6c3dd4a358184389c34d6de7d40"
+dependencies = [
+ "libc 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "docopt"
@@ -232,7 +235,7 @@ name = "pistoncore-event_loop"
 version = "0.0.14"
 source = "git+https://github.com/PistonDevelopers/event_loop#60e41738b53476abcd707529d0e585f4d6934753"
 dependencies = [
- "clock_ticks 0.0.4 (git+https://github.com/tomaka/clock_ticks)",
+ "clock_ticks 0.0.5 (git+https://github.com/tomaka/clock_ticks)",
  "pistoncore-window 0.0.13 (git+https://github.com/pistondevelopers/window)",
  "quack 0.0.13 (git+https://github.com/PistonDevelopers/quack)",
 ]
