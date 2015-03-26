@@ -8,7 +8,7 @@ authors = ["Kevin Butler <haqkrs@gmail.com>"]
 path = "../assembler"
 
 [dependencies]
-log = "0.2"
+log = "*"
 
 [dev-dependencies]
 tempdir = "*"

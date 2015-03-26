@@ -1,4 +1,4 @@
-#![feature(collections)]
+#![feature(str_char)]
 
 pub use code::Code;
 pub use parser::{Command, Parser};

@@ -1,5 +1,6 @@
 use std::ops::Deref;
-use std::{io, fs, path};
+use std::{io, fs};
+use std::path::Path;
 use std::io::{Read, ErrorKind};
 use std::num::FromStrRadix;
 
@@ -8,8 +9,8 @@ use memory::{ROM_SIZE, Word};
 pub struct Rom(Vec<Word>);
 
 impl Rom {
-    pub fn from_file<P: path::AsPath>(filename: &P) -> io::Result<Rom> {
-        let f = &mut try!(fs::File::open(filename.as_path()));
+    pub fn from_file<P: AsRef<Path>>(filename: &P) -> io::Result<Rom> {
+        let f = &mut try!(fs::File::open(filename.as_ref()));
         let s = &mut String::new();
         try!(f.read_to_string(s));
         Rom::from_str(s)

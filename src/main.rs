@@ -1,8 +1,7 @@
-#![feature(path)]
 #![cfg(not(test))]
 
 extern crate hack_interpreter;
-extern crate "rustc-serialize" as rustc_serialize;
+extern crate rustc_serialize;
 extern crate docopt;
 extern crate piston;
 extern crate image;
@@ -10,7 +9,6 @@ extern crate graphics;
 extern crate opengl_graphics;
 extern crate sdl2_window;
 
-use std::path::AsPath;
 use hack_interpreter::runner;
 use docopt::Docopt;
 use simulator::run_simulator;
@@ -37,7 +35,7 @@ fn main() {
 
     if args.flag_runner {
         println!("Running test file: '{}'", input);
-        match runner(input.as_path()) {
+        match runner(input) {
             Ok(()) => println!("Test completed successfully"),
             Err(e) => panic!("{}", e),
         }

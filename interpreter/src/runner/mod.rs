@@ -9,13 +9,13 @@ use self::commands::{Command, Commands};
 #[macro_use] mod macros;
 mod commands;
 
-pub fn runner(base: &Path) -> Result<(), String> {
-    let tst = file_to_string!(base);
+pub fn runner<P: AsRef<Path>>(base: P) -> Result<(), String> {
+    let tst = file_to_string!(base.as_ref());
     let commands = Commands::new(&tst);
     let program = try_s!(Rom::from_str(""));
 
     let mut runner = Runner {
-        base_path: base,
+        base_path: base.as_ref(),
         cpu: Cpu::new(program),
         output_path: None,
         comparison: String::new(),

@@ -1,4 +1,4 @@
-#![feature(io, std_misc, path_ext, core)]
+#![feature(io, convert, path_ext, core)]
 
 #[macro_use] extern crate log;
 extern crate hack_assembler;
