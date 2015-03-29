@@ -1,4 +1,9 @@
 language: rust
+sudo: false
+
+cache:
+  directories:
+      - target
 
 script:
 - (cd interpreter && cargo test)
