@@ -25,7 +25,15 @@ pub fn runner<P: AsRef<Path>>(base: P) -> Result<(), String> {
 
     for cmd in commands {
         let cmd = try!(cmd);
-        try!(runner.step(&cmd))
+        match runner.step(&cmd) {
+            Ok(..) => {},
+            Err(e) => {
+                let _ = runner.flush_output();
+                return Err(format!("Failure running '{}':\n{}",
+                                    base.as_ref().to_string_lossy(),
+                                    e))
+            }
+        }
     }
 
     runner.flush_output()
@@ -119,13 +127,13 @@ impl<'a> Runner<'a> {
         let expected = self.comparison.lines();
         let actual = self.output.lines();
 
-        for (lineno, (a, b)) in actual.zip(expected).enumerate() {
+        for (lineno, (line_a, line_b)) in actual.zip(expected).enumerate() {
             // Only care about mismatches if the actual cell content is different
-            for (a, b) in a.split('|').zip(b.split('|')) {
+            for (a, b) in line_a.split('|').zip(line_b.split('|')) {
                 if a.trim() != b.trim() {
                     return Err(format!("Comparison failed at line: {}\n\
                                         Got: '{}'\nExpected: '{}'",
-                                        lineno, a, b))
+                                        lineno, line_a, line_b))
                 }
             }
         }
