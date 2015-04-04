@@ -1,16 +1,17 @@
 use hack_interpreter::{Rom, Cpu};
 
 use piston;
-use piston::quack::Set;
-use piston::window::WindowSettings;
+use piston::window::{WindowSettings, Size};
 use piston::input::Button;
 use piston::input::keyboard::Key;
 use piston::event::{PressEvent, ReleaseEvent, RenderEvent, UpdateEvent};
-use piston::event::{MaxFps, Ups};
 use graphics;
 use opengl_graphics::{GlGraphics, Texture, OpenGL};
 use image::{Rgba, ImageBuffer, GenericImage};
 use sdl2_window::Sdl2Window as Window;
+
+use std::rc::Rc;
+use std::cell::RefCell;
 
 const WIDTH: usize = 512;
 const HEIGHT: usize = 256;
@@ -32,23 +33,24 @@ pub fn run_simulator(input: &str) {
     let gl_version = OpenGL::_3_2;
     let window = Window::new(
         gl_version,
-        WindowSettings {
-            title: format!("hack-interpreter: {}", input),
-            size: [(WIDTH * SCALE) as u32,
-                   (HEIGHT * SCALE) as u32],
-            fullscreen: false,
-            exit_on_esc: true,
-            samples: 0,
-        }
+        WindowSettings::new(
+            format!("hack-interpreter: {}", input),
+            Size {
+                width:  (WIDTH * SCALE) as u32,
+                height: (HEIGHT * SCALE) as u32
+            }
+        ).exit_on_esc(true)
     );
+
+    let window = Rc::new(RefCell::new(window));
 
     let ref mut image = ImageBuffer::new((WIDTH * SCALE) as u32, (HEIGHT * SCALE) as u32);
     let mut texture = Texture::from_image(&image);
     let ref mut gl = GlGraphics::new(gl_version);
 
     for e in piston::events(window)
-                    .set(Ups(UPDATES_PER_SEC))
-                    .set(MaxFps(MAX_FPS)) {
+                    .ups(UPDATES_PER_SEC)
+                    .max_fps(MAX_FPS) {
         if let Some(Button::Keyboard(key)) = e.press_args() {
             // HACK: Pong is expecting 'ASCII' keycodes of
             // 130 and 132 for left and right movement even
