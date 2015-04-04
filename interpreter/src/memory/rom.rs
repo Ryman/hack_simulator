@@ -2,9 +2,25 @@ use std::ops::Deref;
 use std::{io, fs};
 use std::path::Path;
 use std::io::{Read, ErrorKind};
-use std::num::FromStrRadix;
+use std::fmt::{self, Display};
+use std::error::Error;
 
 use memory::{ROM_SIZE, Word};
+
+// FIXME: Unnecessary after rust#23979
+#[derive(Debug)]
+struct StringError(String);
+
+impl Error for StringError {
+    fn description(&self) -> &str { &self.0 }
+}
+
+impl Display for StringError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        Display::fmt(&self.0, f)
+    }
+}
+// end remove after rust#23979
 
 pub struct Rom(Vec<Word>);
 
@@ -20,16 +36,16 @@ impl Rom {
         let mut buf = s.trim()
                       .lines()
                       .filter(|l| l.len() == 16 && (&l[0..1] != "0" || &l[0..1] != "1"))
-                      .map(|l| FromStrRadix::from_str_radix(l, 2).unwrap())
+                      .map(|l| u16::from_str_radix(l, 2).unwrap())
                       .collect::<Vec<_>>();
 
         let instructions = buf.len();
 
         if instructions > ROM_SIZE {
             return Err(io::Error::new(ErrorKind::Other,
-                                      "ROM cannot fit program",
-                                      Some(format!("{} is the maximum instruction count",
-                                                    ROM_SIZE))))
+                                      StringError(format!("ROM cannot fit program: {} is \
+                                                           the maximum instruction count",
+                                                            ROM_SIZE))))
         }
 
         // Zero the remaining buffer

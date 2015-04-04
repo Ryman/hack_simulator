@@ -155,7 +155,7 @@ impl<'a> Runner<'a> {
             };
 
             let lpad: isize = try_s!(left_fmt[1..].parse());
-            let len = try_s!(expect!(parts, "length for format").parse());
+            let len: isize = try_s!(expect!(parts, "length for format").parse());
             let rpad = try_s!(expect!(parts, "right padding for format").parse());
             let max_len = lpad + len + rpad;
             let val_len = val.len() as isize;

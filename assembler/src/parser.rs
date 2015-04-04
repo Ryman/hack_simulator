@@ -21,12 +21,12 @@ impl<'a> Parser<'a> {
     pub fn advance(&mut self) {
         self.current = "";
         while self.current.is_empty() {
-            let mut line = self.remaining.splitn(1, '\n');
+            let mut line = self.remaining.splitn(2, '\n');
             let current = line.next().unwrap();
 
             // Strip trailing comments
             // FIXME: Should be "//" but the trait impl is missing in std \o/
-            self.current = current.splitn(1, '/').next().unwrap().trim();
+            self.current = current.splitn(2, '/').next().unwrap().trim();
             self.remaining = line.next().unwrap_or("");
         }
     }
@@ -60,7 +60,7 @@ impl<'a> Parser<'a> {
         let idx = self.current.find(';')
                               .unwrap_or(self.current.len());
         self.current[0..idx]
-            .rsplitn(1, '=')
+            .rsplitn(2, '=')
             .next()
             .unwrap_or("")
     }
