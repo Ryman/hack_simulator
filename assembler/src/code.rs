@@ -12,6 +12,9 @@ impl Code {
     pub fn comp(mnemonic: &str) -> Result<&'static str, String> {
         // Non-standard but convenient remappings
         let canonical = match mnemonic {
+            "A+D" => "D+A",
+            "A&D" => "D&A",
+            "A|D" => "D|A",
             "M+D" => "D+M",
             "M&D" => "D&M",
             "M|D" => "D|M",
