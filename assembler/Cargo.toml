@@ -6,3 +6,6 @@ authors = ["Kevin Butler <haqkrs@gmail.com>"]
 
 [dev-dependencies]
 glob = "*"
+
+[features]
+unstable = []

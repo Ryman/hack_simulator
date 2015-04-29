@@ -13,3 +13,6 @@ log = "*"
 [dev-dependencies]
 tempdir = "*"
 glob = "*"
+
+[features]
+unstable = []

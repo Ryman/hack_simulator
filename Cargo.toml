@@ -30,3 +30,6 @@ git = "https://github.com/pistondevelopers/graphics"
 
 [dependencies.image]
 git = "https://github.com/pistondevelopers/image"
+
+[features]
+unstable = []
