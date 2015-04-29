@@ -1,5 +1,4 @@
 language: rust
-sudo: false
 
 cache:
   directories:
@@ -12,6 +11,13 @@ rust:
 before_script:
   - git clone --depth 1 https://github.com/huonw/travis-cargo
   - ln -s ./travis-cargo/travis-cargo.py tc
+
+before_install:
+  - sudo add-apt-repository ppa:team-xbmc/ppa -y
+  - sudo apt-get update -qq
+
+install:
+  - sudo apt-get install libsdl2-dev
 
 script:
   - (cd interpreter &&
