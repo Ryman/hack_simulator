@@ -11,7 +11,7 @@ use hack_assembler::*;
 fn assembles_expected_hack() {
     let files = glob("tests/data/*.asm").unwrap();
     let guards : Vec<_> = files.map(|f|
-        thread::scoped(|| {
+        thread::spawn(|| {
             let ref mut s = String::new();
             let filename = f.unwrap();
             File::open(&filename)
@@ -29,7 +29,7 @@ fn assembles_expected_hack() {
     ).collect();
 
     for guard in guards.into_iter() {
-        match guard.join() {
+        match guard.join().unwrap() {
             Ok(()) => {},
             Err(e) => panic!("{}", e)
         }

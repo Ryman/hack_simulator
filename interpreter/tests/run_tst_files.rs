@@ -9,11 +9,11 @@ use hack_interpreter::runner;
 fn run_tst_files() {
     let files = glob("tests/data/*.tst").unwrap();
     let guards : Vec<_> = files.map(|f|
-        thread::scoped(|| runner(&f.unwrap()))
+        thread::spawn(|| runner(&f.unwrap()))
     ).collect();
 
     for guard in guards.into_iter() {
-        match guard.join() {
+        match guard.join().unwrap() {
             Ok(()) => {},
             Err(e) => panic!("{}", e)
         }
