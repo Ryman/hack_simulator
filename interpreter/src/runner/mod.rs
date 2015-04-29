@@ -1,7 +1,7 @@
 use std::str::FromStr;
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
-use std::fs::{File, PathExt};
+use std::fs::File;
 use {Rom, Cpu};
 use hack_assembler::assemble;
 

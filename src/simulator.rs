@@ -1,10 +1,9 @@
 use hack_interpreter::{Rom, Cpu};
 
-use piston;
 use piston::window::{WindowSettings, Size};
 use piston::input::Button;
 use piston::input::keyboard::Key;
-use piston::event::{PressEvent, ReleaseEvent, RenderEvent, UpdateEvent};
+use piston::event::{PressEvent, ReleaseEvent, RenderEvent, UpdateEvent, Events};
 use graphics;
 use opengl_graphics::{GlGraphics, Texture, OpenGL};
 use image::{Rgba, ImageBuffer, GenericImage};
@@ -48,9 +47,9 @@ pub fn run_simulator(input: &str) {
     let mut texture = Texture::from_image(&image);
     let ref mut gl = GlGraphics::new(gl_version);
 
-    for e in piston::events(window)
-                    .ups(UPDATES_PER_SEC)
-                    .max_fps(MAX_FPS) {
+    for e in window.events()
+                   .ups(UPDATES_PER_SEC)
+                   .max_fps(MAX_FPS) {
         if let Some(Button::Keyboard(key)) = e.press_args() {
             // HACK: Pong is expecting 'ASCII' keycodes of
             // 130 and 132 for left and right movement even
@@ -69,7 +68,7 @@ pub fn run_simulator(input: &str) {
 
         if let Some(args) = e.render_args() {
             gl.draw(
-                [0, 0, args.width as i32, args.height as i32],
+                args.viewport(),
                 |c, g| graphics::image(&texture, c.transform, g)
             );
         }

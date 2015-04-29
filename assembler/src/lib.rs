@@ -1,5 +1,3 @@
-#![feature(str_char)]
-
 pub use code::Code;
 pub use parser::{Command, Parser};
 pub use symbol_table::SymbolTable;

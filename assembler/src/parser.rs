@@ -32,9 +32,9 @@ impl<'a> Parser<'a> {
     }
 
     pub fn command_type(&self) -> Command {
-        match self.current.char_at(0) {
-            '@' => Command::A,
-            '(' => Command::L,
+        match self.current.chars().nth(0) {
+            Some('@') => Command::A,
+            Some('(') => Command::L,
             _ => Command::C
         }
     }
