@@ -9,8 +9,7 @@ rust:
   - beta
 
 before_script:
-  - git clone --depth 1 https://github.com/huonw/travis-cargo
-  - ln -s ./travis-cargo/travis-cargo.py tc
+  - pip install 'travis-cargo<0.2' --user && export PATH=$HOME/.local/bin:$PATH
 
 before_install:
   - sudo add-apt-repository ppa:team-xbmc/ppa -y
@@ -21,10 +20,10 @@ install:
 
 script:
   - (cd interpreter &&
-      ../tc cargo build &&
-      ../tc cargo test)
+      travis-cargo build &&
+      travis-cargo test)
   - (cd assembler &&
-     ../tc cargo build &&
-     ../tc cargo test)
-  - (./tc cargo build &&
-     ./tc cargo test)
+      travis-cargo build &&
+      travis-cargo test)
+  - (travis-cargo build &&
+     travis-cargo test)
