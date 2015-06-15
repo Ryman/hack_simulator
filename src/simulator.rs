@@ -57,7 +57,9 @@ pub fn run_simulator(input: &str) {
             // Will probably need to remap a bunch of other keys.
             cpu.ram[KEYBOARD_ADDR] = match key {
                 Key::Left => 130,
+                Key::Up => 131,
                 Key::Right => 132,
+                Key::Down => 133,
                 key => key as u16
             };
         }
