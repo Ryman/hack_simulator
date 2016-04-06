@@ -3,11 +3,8 @@
 extern crate hack_interpreter;
 extern crate rustc_serialize;
 extern crate docopt;
-extern crate piston;
+extern crate piston_window;
 extern crate image;
-extern crate graphics;
-extern crate opengl_graphics;
-extern crate sdl2_window;
 
 use hack_interpreter::runner;
 use docopt::Docopt;

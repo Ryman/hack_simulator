@@ -1,16 +1,10 @@
 use hack_interpreter::{Rom, Cpu};
 
-use piston::window::{WindowSettings, Size};
-use piston::input::Button;
-use piston::input::keyboard::Key;
-use piston::event::{PressEvent, ReleaseEvent, RenderEvent, UpdateEvent, Events};
-use graphics;
-use opengl_graphics::{GlGraphics, Texture, OpenGL};
 use image::{Rgba, ImageBuffer, GenericImage};
-use sdl2_window::Sdl2Window as Window;
-
-use std::rc::Rc;
-use std::cell::RefCell;
+use piston_window::{
+    WindowSettings, OpenGL, Texture, Key, Button, TextureSettings, PistonWindow,
+    EventLoop, PressEvent, ReleaseEvent, UpdateEvent, image as draw_image,
+};
 
 const WIDTH: usize = 512;
 const HEIGHT: usize = 256;
@@ -29,26 +23,24 @@ pub fn run_simulator(input: &str) {
     let ref mut cpu = Cpu::new(program);
     println!("Running program file: '{}'", input);
 
-    let gl_version = OpenGL::_3_2;
-    let window = Window::new(
-        gl_version,
+    let window: PistonWindow =
         WindowSettings::new(
             format!("hack-interpreter: {}", input),
-            Size {
-                width:  (WIDTH * SCALE) as u32,
-                height: (HEIGHT * SCALE) as u32
-            }
-        ).exit_on_esc(true)
-    );
-
-    let window = Rc::new(RefCell::new(window));
+            [(WIDTH * SCALE) as u32, (HEIGHT * SCALE) as u32]
+        )
+        .opengl(OpenGL::V3_2)
+        .exit_on_esc(true)
+        .build()
+        .expect("Failed to build PistonWindow");
 
     let ref mut image = ImageBuffer::new((WIDTH * SCALE) as u32, (HEIGHT * SCALE) as u32);
-    let mut texture = Texture::from_image(&image);
-    let ref mut gl = GlGraphics::new(gl_version);
+    let mut texture = Texture::from_image(
+        &mut *window.factory.borrow_mut(),
+        image,
+        &TextureSettings::new()
+    ).expect("Failed to create texture");
 
-    for e in window.events()
-                   .ups(UPDATES_PER_SEC)
+    for e in window.ups(UPDATES_PER_SEC)
                    .max_fps(MAX_FPS) {
         if let Some(Button::Keyboard(key)) = e.press_args() {
             // HACK: Pong is expecting 'ASCII' keycodes of
@@ -68,17 +60,15 @@ pub fn run_simulator(input: &str) {
             cpu.ram[KEYBOARD_ADDR] = 0;
         }
 
-        if let Some(args) = e.render_args() {
-            gl.draw(
-                args.viewport(),
-                |c, g| graphics::image(&texture, c.transform, g)
-            );
-        }
+        e.draw_2d(|c, g| {
+            draw_image(&texture, c.transform, g)
+        });
 
         e.update(|_| {
             render_screen(image, &cpu);
-            texture.update(image);
-            for _ in (0..CYCLES_PER_UPDATE) { cpu.step() }
+            texture.update(&mut *e.factory.borrow_mut(), image)
+                   .expect("Failed to write frame");
+            for _ in 0..CYCLES_PER_UPDATE { cpu.step() }
         });
     }
 }
@@ -93,8 +83,8 @@ fn render_screen(image: &mut ImageBuffer<Rgba<u8>, Vec<u8>>, cpu: &Cpu) {
             let (x, y) = ((i % WIDTH) * SCALE, (i / WIDTH) * SCALE);
             let color = if word & (1 << bit) != 0 { 0 } else { 255 };
 
-            for i in (0..SCALE) {
-                for j in (0..SCALE) {
+            for i in 0..SCALE {
+                for j in 0..SCALE {
                     image.put_pixel((x + i) as u32,
                                     (y + j) as u32,
                                     Rgba([color, color, color, 255]));

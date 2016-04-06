@@ -5,31 +5,18 @@ version = "0.0.1"
 authors = ["Kevin Butler <haqkrs@gmail.com>"]
 
 [dependencies]
-log = "*"
-docopt = "*"
-rustc-serialize = "*"
+log = "0.3"
+docopt = "0.6"
+rustc-serialize = "0.3"
+piston_window = "0.38"
+image = "0.7"
 
 [dependencies.hack_interpreter]
 path = "interpreter"
 
 [dev-dependencies]
-tempdir = "*"
-glob = "*"
-
-[dependencies.piston]
-git = "https://github.com/PistonDevelopers/piston"
-
-[dependencies.pistoncore-sdl2_window]
-git = "https://github.com/pistondevelopers/sdl2_window"
-
-[dependencies.piston2d-opengl_graphics]
-git = "https://github.com/pistondevelopers/opengl_graphics"
-
-[dependencies.piston2d-graphics]
-git = "https://github.com/pistondevelopers/graphics"
-
-[dependencies.image]
-git = "https://github.com/pistondevelopers/image"
+tempdir = "0.3"
+glob = "0.2"
 
 [features]
 unstable = []
