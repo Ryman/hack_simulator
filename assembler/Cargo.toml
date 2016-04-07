@@ -5,7 +5,7 @@ version = "0.0.1"
 authors = ["Kevin Butler <haqkrs@gmail.com>"]
 
 [dev-dependencies]
-glob = "*"
+glob = "0.2"
 
 [features]
 unstable = []

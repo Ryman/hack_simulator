@@ -8,11 +8,11 @@ authors = ["Kevin Butler <haqkrs@gmail.com>"]
 path = "../assembler"
 
 [dependencies]
-log = "*"
+log = "0.3"
 
 [dev-dependencies]
-tempdir = "*"
-glob = "*"
+tempdir = "0.3"
+glob = "0.2"
 
 [features]
 unstable = []
