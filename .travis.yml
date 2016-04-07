@@ -5,9 +5,10 @@ cache:
       - target
 
 rust:
-  - 1.0.0
+  - 1.7.0 # minimum version of compiler supported
   - nightly
   - beta
+  - stable
 
 matrix:
   fast_finish: true
