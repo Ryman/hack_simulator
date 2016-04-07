@@ -52,6 +52,8 @@ impl Cpu {
     }
 }
 
+// Don't warn about 0xFFFF overflowing to -1
+#[allow(overflowing_literals)]
 #[cfg(test)]
 mod smoke {
     /// Compare expected values for each cpu step
@@ -83,7 +85,7 @@ mod smoke {
 
             for _i in 0.._max_len {
                 $(
-                    if $name.len() > _i && $cpu.$name != $name[_i]{
+                    if $name.len() > _i && $cpu.$name as i16 != $name[_i] {
                         panic!("unexpected `{}` value after `{}` steps. \
                                 expected `{}`, got `{}`",
                                 stringify!($name), _i, $name[_i], $cpu.$name)
@@ -353,7 +355,7 @@ mod smoke {
             assert_eq!(cpu.ra, 0);
             cpu.step();
             assert_eq!(cpu.ram[0], 1);
-            assert_eq!(cpu.rd, -1);
+            assert_eq!(cpu.rd as i16, -1);
         }
 
         #[test]
@@ -423,11 +425,11 @@ mod smoke {
             assert_eq!(cpu.ram[0], 0);
             assert_eq!(cpu.ra, 0);
             cpu.step();
-            assert_eq!(cpu.ram[0], -1);
+            assert_eq!(cpu.ram[0] as i16, -1);
             assert_eq!(cpu.ra, 0);
             cpu.step();
-            assert_eq!(cpu.ram[0], -1);
-            assert_eq!(cpu.rd, -2);
+            assert_eq!(cpu.ram[0] as i16, -1);
+            assert_eq!(cpu.rd as i16, -2);
         }
 
         #[test]
@@ -490,15 +492,15 @@ mod smoke {
             assert_eq!(cpu.ra, 5);
             assert_eq!(cpu.rd, 0);
             cpu.step();
-            assert_eq!(cpu.ram[5], -5);
+            assert_eq!(cpu.ram[5] as i16, -5);
             assert_eq!(cpu.ra, 5);
             assert_eq!(cpu.rd, 0);
             cpu.step();
-            assert_eq!(cpu.ram[5], -5);
+            assert_eq!(cpu.ram[5] as i16, -5);
             assert_eq!(cpu.ra, 5);
             assert_eq!(cpu.rd, 5);
             cpu.step();
-            assert_eq!(cpu.ram[5], -5);
+            assert_eq!(cpu.ram[5] as i16, -5);
             assert_eq!(cpu.ra, 5);
             assert_eq!(cpu.rd, 10);
         }
