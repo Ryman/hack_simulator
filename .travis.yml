@@ -18,13 +18,6 @@ matrix:
 before_script:
   - pip install 'travis-cargo<0.2' --user && export PATH=$HOME/.local/bin:$PATH
 
-before_install:
-  - sudo add-apt-repository ppa:team-xbmc/ppa -y
-  - sudo apt-get update -qq
-
-install:
-  - sudo apt-get install libsdl2-dev
-
 script:
   - (cd interpreter &&
       travis-cargo build &&
@@ -34,3 +27,13 @@ script:
       travis-cargo test)
   - (travis-cargo build &&
      travis-cargo test)
+
+env:
+    global:
+        - LD_LIBRARY_PATH: /usr/local/lib
+
+install:
+    # SDL2
+    - curl -O http://www.libsdl.org/release/SDL2-2.0.0.tar.gz
+    - tar -xzvf SDL2-2.0.0.tar.gz
+    - (cd SDL2-2.0.0 && ./configure && make && sudo make install)
