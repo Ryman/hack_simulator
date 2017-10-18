@@ -33,15 +33,17 @@ pub fn run_simulator(input: &str) {
         .build()
         .expect("Failed to build PistonWindow");
 
+    let mut window = window.ups(UPDATES_PER_SEC)
+                       .max_fps(MAX_FPS);
+
     let ref mut image = ImageBuffer::new((WIDTH * SCALE) as u32, (HEIGHT * SCALE) as u32);
     let mut texture = Texture::from_image(
-        &mut *window.factory.borrow_mut(),
+        &mut window.factory,
         image,
         &TextureSettings::new()
     ).expect("Failed to create texture");
 
-    for e in window.ups(UPDATES_PER_SEC)
-                   .max_fps(MAX_FPS) {
+    while let Some(e) = window.next() {
         if let Some(Button::Keyboard(key)) = e.press_args() {
             // HACK: Pong is expecting 'ASCII' keycodes of
             // 130 and 132 for left and right movement even
@@ -60,13 +62,13 @@ pub fn run_simulator(input: &str) {
             cpu.ram[KEYBOARD_ADDR] = 0;
         }
 
-        e.draw_2d(|c, g| {
+        window.draw_2d(&e, |c, g| {
             draw_image(&texture, c.transform, g)
         });
 
         e.update(|_| {
             render_screen(image, &cpu);
-            texture.update(&mut *e.factory.borrow_mut(), image)
+            texture.update(&mut window.encoder, image)
                    .expect("Failed to write frame");
             for _ in 0..CYCLES_PER_UPDATE { cpu.step() }
         });
