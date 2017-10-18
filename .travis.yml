@@ -5,7 +5,7 @@ cache:
       - target
 
 rust:
-  - 1.7.0 # minimum version of compiler supported
+  - 1.21.0 # minimum version of compiler supported
   - nightly
   - beta
   - stable
